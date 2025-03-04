@@ -8,15 +8,7 @@
   "scripts": {
     "start": "node --watch server/svr.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Jaker000/Web-prog-CW.git"
-  },
-  "author": "Jake Hele",
+  "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Jaker000/Web-prog-CW/issues"
-  },
-  "homepage": "https://github.com/Jaker000/Web-prog-CW#readme",
   "description": ""
 }
