@@ -1,0 +1,22 @@
+{
+  "name": "up2199268",
+  "dependencies": {
+    "express": "^4.21.2"},
+  "version": "1.0.0",
+  "main": "svr.js",
+  "devDependencies": {},
+  "scripts": {
+    "start": "node --watch server/svr.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jaker000/Web-prog-CW.git"
+  },
+  "author": "Jake Hele",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jaker000/Web-prog-CW/issues"
+  },
+  "homepage": "https://github.com/Jaker000/Web-prog-CW#readme",
+  "description": ""
+}
