@@ -1,34 +1,29 @@
-<link rel="stylesheet" href="styles.css">
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Race Control</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-        }
-        #results {
-            margin-top: 20px;
-            list-style: none;
-            padding: 0;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Race Control</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <h1>Race Control</h1>
-    <button class="startRace">Start Race</button>
-    <button class="recordTime">Record Time</button>
-    <ul class="results"></ul>
+  <div class="top-bar">
+    <h1>Portsmouth Joggers Club</h1>
+    <div id="raceTimer">00:00:00.00</div>
+  </div>
 
-    <script src="CW.js"></script>
+  <div class="controls">
+    <input type="text" class="bibInput" placeholder="Enter Bib #" />
+    <div class="buttons">
+      <button class="startRace">Start Race</button>
+      <button class="recordTime" disabled>Record Time</button>
+      <button class="submitResults">Submit Results</button>
+      <button class="clearResults">Clear Results</button>
+    </div>
+  </div>
+
+  <ul class="results"></ul>
+
+  <script src="main.js"></script>
 </body>
 </html>

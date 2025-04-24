@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Results</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="top-bar">
+    <h1>Live Race Results</h1>
+  </div>
+
+  <div class="controls">
+    <button id="downloadCSV">Download CSV</button>
+  </div>
+
+  <ul class="results" id="resultsList">Loading results...</ul>
+
+  <script>
+    async function fetchResults() {
+      try {
+        const response = await fetch('/results');
+        const results = await response.json();
+
+        const list = document.getElementById('resultsList');
+        list.innerHTML = '';
+
+        if (results.length === 0) {
+          list.innerHTML = '<li>No results uploaded yet.</li>';
+          return;
+        }
+    results.sort((a, b) => {
+  return a.time.localeCompare(b.time); 
+    });
+
+        results.forEach((result, i) => {
+          const item = document.createElement('li');
+          item.textContent = `#${i + 1} | Bib: ${result.bib || 'Unknown'} | Time: ${result.time}`;
+          list.appendChild(item);
+        });
+      } catch (err) {
+        console.error('Failed to load results', err);
+        document.getElementById('resultsList').innerHTML = '<li>Error loading results</li>';
+      }
+    }
+
+    window.addEventListener('load', () => {
+      fetchResults();
+      setInterval(fetchResults, 10000); 
+    });
+
+    document.getElementById('downloadCSV').addEventListener('click', async () => {
+      try {
+        const response = await fetch('/results');
+        const results = await response.json();
+
+        if (results.length === 0) {
+          alert("No results to download.");
+          return;
+        }
+
+        const headers = ['Position', 'Bib', 'Time', 'Timestamp'];
+        const rows = results.map((r, i) => [
+          i + 1,
+          r.bib || 'Unknown',
+          r.time,
+          r.timestamp
+        ]);
+
+        const csvContent = [headers, ...rows]
+          .map(row => row.join(','))
+          .join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'race-results.csv';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+      } catch (err) {
+        console.error('Failed to export CSV', err);
+        alert("Something went wrong while exporting.");
+      }
+    });
+  </script>
+</body>
+</html>

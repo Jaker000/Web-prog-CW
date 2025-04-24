@@ -2,6 +2,7 @@
   "name": "up2199268",
   "dependencies": {
     "express": "^4.21.2"},
+  "type": "module",
   "version": "1.0.0",
   "main": "svr.js",
   "devDependencies": {},
