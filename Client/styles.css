@@ -1,94 +1,111 @@
 :root {
-    --primary: #004466;
-    --accent: #00b4d8;
-    --bg: #f0f4f8;
-    --text: #222;
-    --button-bg: #ffffff;
-    --button-border: #004466;
-  }
-  
-  * {
-    box-sizing: border-box;
-  }
-  
-  body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background-color: var(--bg);
-    color: var(--text);
-    text-align: center;
-  }
-  
-  .top-bar {
-    background-color: var(--primary);
-    color: white;
-    padding: 1.2rem;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  #raceTimer {
-    font-size: 2.5rem;
-    font-weight: bold;
-    margin-top: 0.5rem;
-    color: var(--accent);
-  }
-  
-  .controls {
-    padding: 1.5rem 1rem;
-  }
-  
-  .bibInput {
-    padding: 12px;
-    font-size: 18px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    width: 220px;
-    margin-bottom: 20px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  .buttons {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1rem;
-  }
-  
-  .buttons button {
-    padding: 14px 28px;
-    font-size: 16px;
-    background-color: var(--button-bg);
-    border: 2px solid var(--button-border);
-    color: var(--button-border);
-    border-radius: 6px;
-    font-weight: 600;
-    transition: background 0.2s ease;
-  }
-  
-  .buttons button:hover {
-    background-color: var(--accent);
-    color: white;
-    border-color: var(--accent);
-  }
-  
-  .results {
-    list-style: none;
-    padding: 0;
-    margin-top: 30px;
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  .results li {
-    background: white;
-    padding: 12px;
-    margin: 5px 0;
-    border-left: 6px solid var(--primary);
-    font-size: 16px;
-    text-align: left;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-  
+  --primary: #003049;     
+  --accent: #f77f00;      
+  --bg: #f8f9fa;         
+  --text: #212529;        
+  --button-bg: #ffffff;
+  --button-border: #003049;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.top-bar {
+  background-color: var(--primary);
+  color: white;
+  padding: 1.2rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+#raceTimer {
+  font-size: 2.8rem;
+  font-weight: bold;
+  margin-top: 0.5rem;
+  color: var(--accent);
+}
+
+.controls {
+  padding: 1.5rem 1rem;
+  margin: 0 auto;
+  width: 90%;
+  max-width: 500px;
+}
+
+.bibInput {
+  padding: 14px;
+  font-size: 18px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.buttons button {
+  flex: 1 1 calc(45% - 1rem);
+  min-width: 140px;
+  padding: 14px 18px;
+  font-size: 16px;
+  background-color: var(--button-bg);
+  border: 2px solid var(--button-border);
+  color: var(--button-border);
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.buttons button:hover {
+  background-color: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.stopRace {
+  background-color: var(--danger);
+  border: 2px solid var(--danger);
+  color: white;
+}
+
+.stopRace:hover {
+  background-color: #b02a37;
+  border-color: #b02a37;
+  color: white;
+}
+
+.results {
+  list-style: none;
+  padding: 0;
+  margin: 30px auto 0;
+  width: 90%;
+  max-width: 500px;
+}
+
+.results li {
+  background: white;
+  padding: 14px;
+  margin: 6px 0;
+  border-left: 6px solid var(--primary);
+  font-size: 16px;
+  text-align: left;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}

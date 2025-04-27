@@ -1,7 +1,8 @@
 const startButton = document.querySelector('.startRace');
+const stopButton = document.querySelector('.stopRace');
 const recordButton = document.querySelector('.recordTime');
-const clearButton = document.querySelector('.clearResults');
 const submitButton = document.querySelector('.submitResults');
+const clearButton = document.querySelector('.clearResults');
 const bibInput = document.querySelector('.bibInput');
 const finishList = document.querySelector('.results');
 const raceTimer = document.querySelector('#raceTimer');
@@ -22,6 +23,8 @@ startButton.addEventListener('click', () => {
 
   raceStartTime = Date.now();
   recordButton.disabled = false;
+  stopButton.disabled = false;
+  startButton.disabled = true;
   finishList.innerHTML = '';
   localStorage.removeItem('raceResults');
 
@@ -34,8 +37,25 @@ startButton.addEventListener('click', () => {
   console.log("Race started.");
 });
 
+stopButton.addEventListener('click', () => {
+  if (raceStartTime === null) {
+    alert("Race hasn't started yet!");
+    return;
+  }
+
+  clearInterval(timerInterval);
+  timerInterval = null;
+  recordButton.disabled = true;
+  stopButton.disabled = true;
+
+  console.log("Race stopped.");
+});
+
 recordButton.addEventListener('click', () => {
-  if (!raceStartTime) return;
+  if (!raceStartTime || timerInterval === null) {
+    alert("Race is not running!");
+    return;
+  }
 
   const bib = bibInput.value.trim() || 'Unknown';
   const elapsedTime = (Date.now() - raceStartTime);
@@ -82,11 +102,20 @@ submitButton.addEventListener('click', async () => {
 });
 
 clearButton.addEventListener('click', () => {
-  localStorage.removeItem('raceResults');
-  finishList.innerHTML = '';
-  recordButton.disabled = true;
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+
+  raceStartTime = null;
   raceTimer.textContent = '00:00:00.00';
-  clearInterval(timerInterval);
+  recordButton.disabled = true;
+  stopButton.disabled = true;
+  startButton.disabled = false;
+  finishList.innerHTML = '';
+  localStorage.removeItem('raceResults');
+
+  console.log("Race cleared.");
 });
 
 window.addEventListener('DOMContentLoaded', () => {
