@@ -4,7 +4,7 @@ const clearButton = document.querySelector('.clearResults');
 const submitButton = document.querySelector('.submitResults');
 const bibInput = document.querySelector('.bibInput');
 const finishList = document.querySelector('.results');
-const raceTimer = document.getElementById('raceTimer');
+const raceTimer = document.querySelector('#raceTimer');
 
 let raceStartTime = null;
 let timerInterval = null;
@@ -15,25 +15,24 @@ function formatTime(ms) {
 }
 
 startButton.addEventListener('click', () => {
-    if (raceStartTime !== null) {
-      alert("Race already started!");
-      return;
-    }
-  
-    raceStartTime = Date.now();
-    recordButton.disabled = false;
-    finishList.innerHTML = '';
-    localStorage.removeItem('raceResults');
-  
-    timerInterval = setInterval(() => {
-      const now = Date.now();
-      const elapsed = now - raceStartTime;
-      raceTimer.textContent = formatTime(elapsed);
-    }, 100);
-  
-    console.log("Race started.");
-  });
-  
+  if (raceStartTime !== null) {
+    alert("Race already started!");
+    return;
+  }
+
+  raceStartTime = Date.now();
+  recordButton.disabled = false;
+  finishList.innerHTML = '';
+  localStorage.removeItem('raceResults');
+
+  timerInterval = setInterval(() => {
+    const now = Date.now();
+    const elapsed = now - raceStartTime;
+    raceTimer.textContent = formatTime(elapsed);
+  }, 100);
+
+  console.log("Race started.");
+});
 
 recordButton.addEventListener('click', () => {
   if (!raceStartTime) return;
