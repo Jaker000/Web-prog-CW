@@ -1,5 +1,5 @@
 import express from 'express';
-import { openDb } from './database.js';
+import {openDb} from './database.js';
 
 const app = express();
 const PORT = 8080;
@@ -49,6 +49,13 @@ app.get('/results', async (req, res) => {
 });
 
 app.post('/reset-results', async (req, res) => {
+  const auth = req.headers.authorization || '';
+  const expected = 'Bearer admin123'; 
+
+  if (auth !== expected) {
+    return res.status(403).send('Forbidden');
+  }
+
   try {
     await db.run('DELETE FROM results');
     console.log('All results cleared.');
@@ -58,6 +65,7 @@ app.post('/reset-results', async (req, res) => {
     res.status(500).send('Error clearing results');
   }
 });
+
 
 app.listen(PORT, async () => {
   await setupDb();
