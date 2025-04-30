@@ -48,6 +48,17 @@ app.get('/results', async (req, res) => {
   res.json(rows);
 });
 
+app.post('/reset-results', async (req, res) => {
+  try {
+    await db.run('DELETE FROM results');
+    console.log('All results cleared.');
+    res.sendStatus(200);
+  } catch (err) {
+    console.error('Failed to clear results:', err.message);
+    res.status(500).send('Error clearing results');
+  }
+});
+
 app.listen(PORT, async () => {
   await setupDb();
   console.log(`Server running at http://localhost:${PORT}`);
