@@ -1,5 +1,5 @@
 import express from 'express';
-import {openDb} from './database.js';
+import { openDb } from './database.js';
 
 const app = express();
 const PORT = 8080;
@@ -17,7 +17,13 @@ async function setupDb() {
       bib TEXT,
       time TEXT,
       timestamp TEXT
-    )
+    );
+  `);
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS meta (
+      key TEXT PRIMARY KEY,
+      value TEXT
+    );
   `);
 }
 
@@ -38,7 +44,6 @@ app.post('/upload', async (req, res) => {
   });
 
   await Promise.all(insertPromises);
-
   console.log(`Stored ${results.length} results into database.`);
   res.json({ message: "Results uploaded and saved!" });
 });
@@ -49,16 +54,10 @@ app.get('/results', async (req, res) => {
 });
 
 app.post('/reset-results', async (req, res) => {
-  const auth = req.headers.authorization || '';
-  const expected = 'Bearer admin123'; 
-
-  if (auth !== expected) {
-    return res.status(403).send('Forbidden');
-  }
-
   try {
     await db.run('DELETE FROM results');
-    console.log('All results cleared.');
+    await db.run(`DELETE FROM meta WHERE key = 'startTime'`);
+    console.log('All results and race start time cleared.');
     res.sendStatus(200);
   } catch (err) {
     console.error('Failed to clear results:', err.message);
@@ -66,6 +65,20 @@ app.post('/reset-results', async (req, res) => {
   }
 });
 
+app.post('/start-time', async (req, res) => {
+  const { startTime } = req.body;
+  try {
+    await db.run(`INSERT OR REPLACE INTO meta (key, value) VALUES ('startTime', ?)`, startTime);
+    res.sendStatus(200);
+  } catch (err) {
+    res.status(500).send('Failed to set start time');
+  }
+});
+
+app.get('/start-time', async (req, res) => {
+  const row = await db.get(`SELECT value FROM meta WHERE key = 'startTime'`);
+  res.json({ startTime: row?.value || null });
+});
 
 app.listen(PORT, async () => {
   await setupDb();
