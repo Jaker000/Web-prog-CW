@@ -1,6 +1,25 @@
+let currentRaceId = null;
+
+function loadRace() {
+  const input = document.querySelector('#raceIdInput');
+  currentRaceId = input.value.trim();
+  if (!currentRaceId) {
+    alert('Please enter a Race ID.');
+    return;
+  }
+
+  localStorage.setItem('currentRaceId', currentRaceId);
+  fetchResults();
+  displayStartTime();
+  setInterval(fetchResults, 2000);
+}
+
+
 async function fetchResults() {
+  if (!currentRaceId) return;
+
   try {
-    const response = await fetch('/results');
+    const response = await fetch(`/results?raceId=${encodeURIComponent(currentRaceId)}`);
     const results = await response.json();
     const list = document.querySelector('#resultsList');
     list.innerHTML = '';
@@ -22,76 +41,30 @@ async function fetchResults() {
 }
 
 async function displayStartTime() {
-  const res = await fetch('/start-time');
+  if (!currentRaceId) return;
+
+  const res = await fetch(`/start-time?raceId=${encodeURIComponent(currentRaceId)}`);
   const { startTime } = await res.json();
 
-  const display = document.createElement('p');
-  display.style.fontWeight = 'bold';
-  display.style.marginTop = '1rem';
-
+  const display = document.querySelector('raceStartDisplay');
   if (startTime) {
     const date = new Date(startTime);
     if (!isNaN(date)) {
-      const formatted = date.toLocaleString('en-GB', {
-        weekday: 'long',
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      });
-      display.textContent = `Race started: ${formatted}`;
+      display.textContent = `Race started: ${date.toLocaleString('en-GB')}`;
     } else {
       display.textContent = 'Race start time is invalid.';
     }
   } else {
     display.textContent = 'Race has not started yet.';
   }
-
-  document.querySelector('.top-bar').appendChild(display);
 }
-
-document.querySelector('#downloadCSV').addEventListener('click', async () => {
-  try {
-    const response = await fetch('/results');
-    const results = await response.json();
-
-    if (results.length === 0) {
-      alert("No results to download.");
-      return;
-    }
-
-    const headers = ['Position', 'Bib', 'Time', 'Timestamp'];
-    const rows = results.map((r, i) => [
-      i + 1,
-      r.bib ?? 'Unknown',
-      r.time,
-      new Date(r.timestamp).toLocaleString('en-GB')
-    ]);
-
-    const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'race-results.csv';
-    a.style.display = 'none';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  } catch (err) {
-    console.error('Failed to export CSV', err);
-    alert("Something went wrong while exporting.");
+window.addEventListener('load', () => {
+  const storedId = localStorage.getItem('currentRaceId');
+  if (storedId) {
+    document.querySelector('#raceIdInput').value = storedId;
+    currentRaceId = storedId;
+    fetchResults();
+    displayStartTime();
+    setInterval(fetchResults, 2000);
   }
 });
-
-window.addEventListener('load', () => {
-  fetchResults();
-  displayStartTime();
-  setInterval(fetchResults, 2000);
-});
-
-

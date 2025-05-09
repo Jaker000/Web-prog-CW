@@ -18,9 +18,12 @@
   
 
   <div class="controls">
-    <button onclick="window.location.href='index.html'">Back to PJC Race Timer</button>
-    <button id="downloadCSV">Download CSV</button>
-  </div>
+  <input id="raceIdInput" type="text" placeholder="Enter Race ID" class="bibInput" />
+  <button onclick="loadRace()">Load Race</button>
+  <button onclick="window.location.href='index.html'">Back to PJC Race Timer</button>
+  <button id="downloadCSV">Download CSV</button>
+</div>
+
 
   <ul class="results" id="resultsList">Loading results...</ul>
 

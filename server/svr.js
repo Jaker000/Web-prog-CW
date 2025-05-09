@@ -16,48 +16,59 @@ async function setupDb() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       bib TEXT,
       time TEXT,
-      timestamp TEXT
+      timestamp TEXT,
+      race_id TEXT
     );
   `);
   await db.exec(`
     CREATE TABLE IF NOT EXISTS meta (
       key TEXT PRIMARY KEY,
-      value TEXT
+      value TEXT,
+      race_id TEXT
     );
   `);
 }
 
 app.post('/upload', async (req, res) => {
-  const { results } = req.body;
+  const { results, raceId } = req.body;
 
-  if (!Array.isArray(results)) {
-    return res.status(400).json({ message: "Invalid data format." });
+  if (!Array.isArray(results) || !raceId) {
+    return res.status(400).json({ message: "Invalid data format or missing raceId." });
   }
 
   const insertPromises = results.map(result => {
     return db.run(
-      'INSERT INTO results (bib, time, timestamp) VALUES (?, ?, ?)',
+      'INSERT INTO results (bib, time, timestamp, race_id) VALUES (?, ?, ?, ?)',
       result.bib || 'Unknown',
       result.time,
-      result.timestamp
+      result.timestamp,
+      raceId
     );
   });
 
   await Promise.all(insertPromises);
-  console.log(`Stored ${results.length} results into database.`);
+  console.log(`Stored ${results.length} results for race "${raceId}"`);
   res.json({ message: "Results uploaded and saved!" });
 });
 
 app.get('/results', async (req, res) => {
-  const rows = await db.all('SELECT bib, time, timestamp FROM results ORDER BY id ASC');
+  const raceId = req.query.raceId;
+  if (!raceId) {
+    return res.status(400).json({ message: 'Missing raceId in query.' });
+  }
+
+  const rows = await db.all(
+    'SELECT bib, time, timestamp FROM results WHERE race_id = ? ORDER BY id ASC',
+    raceId
+  );
   res.json(rows);
 });
 
 app.post('/reset-results', async (req, res) => {
   try {
     await db.run('DELETE FROM results');
-    await db.run(`DELETE FROM meta WHERE key = 'startTime'`);
-    console.log('All results and race start time cleared.');
+    await db.run('DELETE FROM meta');
+    console.log('All results and meta data cleared.');
     res.sendStatus(200);
   } catch (err) {
     console.error('Failed to clear results:', err.message);
@@ -66,17 +77,31 @@ app.post('/reset-results', async (req, res) => {
 });
 
 app.post('/start-time', async (req, res) => {
-  const { startTime } = req.body;
+  const { startTime, raceId } = req.body;
+  if (!raceId || !startTime) {
+    return res.status(400).send('Missing raceId or startTime.');
+  }
+
   try {
-    await db.run(`INSERT OR REPLACE INTO meta (key, value) VALUES ('startTime', ?)`, startTime);
+    await db.run(
+      `INSERT OR REPLACE INTO meta (key, value, race_id) VALUES ('startTime', ?, ?)`,
+      startTime,
+      raceId
+    );
     res.sendStatus(200);
   } catch (err) {
+    console.error('Failed to set start time:', err.message);
     res.status(500).send('Failed to set start time');
   }
 });
 
 app.get('/start-time', async (req, res) => {
-  const row = await db.get(`SELECT value FROM meta WHERE key = 'startTime'`);
+  const raceId = req.query.raceId;
+  if (!raceId) {
+    return res.status(400).json({ startTime: null, error: 'Missing raceId' });
+  }
+
+  const row = await db.get(`SELECT value FROM meta WHERE key = 'startTime' AND race_id = ?`, raceId);
   res.json({ startTime: row?.value || null });
 });
 

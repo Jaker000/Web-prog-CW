@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PJC Race Timer</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
   <div class="top-bar">
     <h1>Portsmouth Joggers Club</h1>
@@ -16,15 +14,18 @@
 
   <div class="controls">
     <div class="instructions" role="alert" aria-live="polite">
-    Enter your Bib Number and press <strong>Record Time</strong> after you finish.
+      Enter your Race ID and Bib Number, then press <strong>Record Time</strong> when you finish.
     </div>
+
+    <input class="raceIdInput" type="text" placeholder="Enter Race ID" />
     <input class="bibInput" type="number" placeholder="Enter Bib #" />
+
     <div class="buttons">
       <button class="startRace">Start Race</button>
-      <button class="stopRace" disabled>Stop Race</button>
       <button class="recordTime" disabled>Record Time</button>
-      <button class="clearResults">Reset Page Locally </button>
+      <button class="clearResults">Reset Page Locally</button>
     </div>
+
     <div class="liveLink">
       <button class="liveResultsBtn" onclick="window.location.href='live-results.html'">View Live Results</button>
     </div>
