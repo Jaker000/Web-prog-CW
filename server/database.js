@@ -20,13 +20,5 @@ export async function setupDb() {
       race_id TEXT
     );
   `);
-
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS race_start (
-      race_id TEXT PRIMARY KEY,
-      start_time TEXT
-    );
-  `);
-
   return db;
 }

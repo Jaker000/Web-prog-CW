@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Live Race Results</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
   <header class="top-bar">
     <h1>Live Race Results</h1>
@@ -15,7 +17,7 @@
   <main>
     <section class="controls">
       <input id="raceIdInput" type="text" placeholder="Enter Race ID" class="bibInput" />
-      <button onclick="loadRace()">Load Race</button>
+      <button id="loadRace">Load Race</button>
       <button onclick="window.location.href='index.html'">Back to PJC Race Timer</button>
       <button id="downloadCSV">Download CSV</button>
     </section>
@@ -27,4 +29,5 @@
 
   <script src="live-results.js"></script>
 </body>
+
 </html>
