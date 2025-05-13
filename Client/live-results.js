@@ -1,70 +1,101 @@
-let currentRaceId = null;
+document.addEventListener('DOMContentLoaded', () => {
+  let currentRaceId = null;
 
-function loadRace() {
-  const input = document.querySelector('#raceIdInput');
-  currentRaceId = input.value.trim();
-  if (!currentRaceId) {
-    alert('Please enter a Race ID.');
-    return;
-  }
+  const raceIdInput = document.querySelector('#raceIdInput');
+  const loadButton = document.querySelector('#loadRace');
+  const downloadButton = document.querySelector('#downloadCSV');
+  const resultList = document.querySelector('#resultsList');
+  const raceStartDisplay = document.querySelector('#raceStartDisplay');
 
-  localStorage.setItem('currentRaceId', currentRaceId);
-  fetchResults();
-  displayStartTime();
-  setInterval(fetchResults, 2000);
-}
-
-
-async function fetchResults() {
-  if (!currentRaceId) return;
-
-  try {
-    const response = await fetch(`/results?raceId=${encodeURIComponent(currentRaceId)}`);
-    const results = await response.json();
-    const list = document.querySelector('#resultsList');
-    list.innerHTML = '';
+  function formatResults(results) {
+    resultList.innerHTML = '';
 
     if (results.length === 0) {
-      list.innerHTML = '<li>No results uploaded yet.</li>';
+      resultList.innerHTML = '<li>No results uploaded yet.</li>';
       return;
     }
 
     results.forEach((result, i) => {
       const item = document.createElement('li');
       item.textContent = `#${i + 1} | Bib: ${result.bib ?? 'Unknown'} | Time: ${result.time}`;
-      list.appendChild(item);
+      resultList.appendChild(item);
     });
-  } catch (err) {
-    console.error('Failed to load results', err);
-    document.querySelector('#resultsList').innerHTML = '<li>Error loading results</li>';
   }
-}
 
-async function displayStartTime() {
-  if (!currentRaceId) return;
+  async function fetchResults() {
+    if (!currentRaceId) return;
 
-  const res = await fetch(`/start-time?raceId=${encodeURIComponent(currentRaceId)}`);
-  const { startTime } = await res.json();
-
-  const display = document.querySelector('raceStartDisplay');
-  if (startTime) {
-    const date = new Date(startTime);
-    if (!isNaN(date)) {
-      display.textContent = `Race started: ${date.toLocaleString('en-GB')}`;
-    } else {
-      display.textContent = 'Race start time is invalid.';
+    try {
+      const res = await fetch(`/results?raceId=${encodeURIComponent(currentRaceId)}`);
+      const data = await res.json();
+      formatResults(data);
+    } catch (err) {
+      console.error('Error loading results:', err);
+      resultList.innerHTML = '<li>Error loading results</li>';
     }
-  } else {
-    display.textContent = 'Race has not started yet.';
   }
-}
-window.addEventListener('load', () => {
-  const storedId = localStorage.getItem('currentRaceId');
-  if (storedId) {
-    document.querySelector('#raceIdInput').value = storedId;
-    currentRaceId = storedId;
+
+  async function displayStartTime() {
+    if (!currentRaceId) return;
+    try {
+      const res = await fetch(`/start-time?raceId=${encodeURIComponent(currentRaceId)}`);
+      const { startTime } = await res.json();
+
+      if (startTime) {
+        const date = new Date(startTime);
+        raceStartDisplay.textContent = `Race started: ${date.toLocaleString('en-GB')}`;
+      } else {
+        raceStartDisplay.textContent = 'Race has not started yet.';
+      }
+    } catch (err) {
+      raceStartDisplay.textContent = 'Error loading start time.';
+    }
+  }
+
+  async function downloadCSV() {
+    if (!currentRaceId) return alert("Please load a race first.");
+
+    try {
+      const res = await fetch(`/results?raceId=${encodeURIComponent(currentRaceId)}`);
+      const results = await res.json();
+
+      if (results.length === 0) {
+        alert("No results to download.");
+        return;
+      }
+
+      const headers = ['Position', 'Bib', 'Time', 'Timestamp'];
+      const rows = results.map((r, i) => [
+        i + 1,
+        r.bib ?? 'Unknown',
+        r.time,
+        new Date(r.timestamp).toLocaleString('en-GB')
+      ]);
+
+      const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `race-${currentRaceId}-results.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('CSV download failed:', err);
+      alert("Something went wrong while exporting.");
+    }
+  }
+
+  loadButton.addEventListener('click', () => {
+    currentRaceId = raceIdInput.value.trim();
+    if (!currentRaceId) return alert("Please enter a Race ID.");
     fetchResults();
     displayStartTime();
     setInterval(fetchResults, 2000);
-  }
+  });
+
+  downloadButton.addEventListener('click', downloadCSV);
 });

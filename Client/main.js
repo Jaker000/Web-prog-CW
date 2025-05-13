@@ -47,10 +47,8 @@ function startTimer() {
 
 startButton.addEventListener('click', async () => {
   raceId = raceIdInput.value.trim();
-  if (!raceId) {
-    alert("Please enter a Race ID.");
-    return;
-  }
+  if (!raceId) return alert("Please enter a Race ID.");
+  localStorage.setItem('raceId', raceId);
 
   const res = await fetch(`/start-time?raceId=${encodeURIComponent(raceId)}`);
   const data = await res.json();
@@ -102,7 +100,7 @@ resetButton.addEventListener('click', () => {
   clearInterval(timerInterval);
   timerInterval = null;
   raceStartTime = null;
-
+  localStorage.removeItem('raceId');
   raceTimer.textContent = '00:00:00.00';
   recordButton.disabled = true;
   startButton.disabled = false;
@@ -110,9 +108,12 @@ resetButton.addEventListener('click', () => {
 });
 
 window.addEventListener('DOMContentLoaded', async () => {
-  raceId = raceIdInput.value.trim();
-  if (!raceId) return;
-
-  raceStartTime = await fetchStartTime();
-  if (raceStartTime) startTimer();
+  const storedRaceId = localStorage.getItem('raceId');
+  if (storedRaceId) {
+    raceIdInput.value = storedRaceId;
+    raceId = storedRaceId;
+    raceStartTime = await fetchStartTime();
+    if (raceStartTime) startTimer();
+  }
 });
+
