@@ -7,19 +7,23 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="top-bar">
+  <header class="top-bar">
     <h1>Live Race Results</h1>
     <div id="raceStartDisplay" style="margin-top: 1rem; font-weight: bold;"></div>
-  </div>
+  </header>
 
-  <div class="controls">
-    <input id="raceIdInput" type="text" placeholder="Enter Race ID" class="bibInput" />
-    <button id="loadRace">Load Race</button>
-    <button onclick="window.location.href='index.html'">Back to PJC Race Timer</button>
-    <button id="downloadCSV">Download CSV</button>
-  </div>
+  <main>
+    <section class="controls">
+      <input id="raceIdInput" type="text" placeholder="Enter Race ID" class="bibInput" />
+      <button onclick="loadRace()">Load Race</button>
+      <button onclick="window.location.href='index.html'">Back to PJC Race Timer</button>
+      <button id="downloadCSV">Download CSV</button>
+    </section>
 
-  <ul class="results" id="resultsList">Loading results...</ul>
+    <section>
+      <ul class="results" id="resultsList">Loading results...</ul>
+    </section>
+  </main>
 
   <script src="live-results.js"></script>
 </body>

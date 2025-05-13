@@ -23,6 +23,7 @@ body {
   text-align: center;
 }
 
+header,
 .top-bar {
   background-color: var(--primary);
   color: white;
@@ -30,7 +31,6 @@ body {
   font-size: 2rem;
   font-weight: bold;
 }
-
 
 #raceTimer {
   font-size: 2.8rem;
@@ -49,7 +49,6 @@ body {
   margin: 1rem auto;
   display: block;
 }
-
 
 .controls button,
 .buttons button,
@@ -80,8 +79,6 @@ body {
   flex: 1 1 calc(45% - 1rem);
   min-width: 140px;
 }
-
-
 
 .results {
   list-style: none;

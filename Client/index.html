@@ -7,31 +7,36 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="top-bar">
+  <header class="top-bar">
     <h1>Portsmouth Joggers Club</h1>
     <div id="raceTimer">00:00:00.00</div>
-  </div>
+  </header>
 
-  <div class="controls">
-    <div class="instructions" role="alert" aria-live="polite">
-      Enter your Race ID and Bib Number, then press <strong>Record Time</strong> when you finish.
-    </div>
+  <main>
+    <section class="controls">
+      <p class="instructions" role="alert" aria-live="polite">
+        Enter your Race ID and Bib Number, then press <strong>Record Time</strong> when you finish.
+      </p>
 
-    <input class="raceIdInput" type="text" placeholder="Enter Race ID" />
-    <input class="bibInput" type="number" placeholder="Enter Bib #" />
+      <input class="raceIdInput" type="text" placeholder="Enter Race ID" />
+      <input class="bibInput" type="number" placeholder="Enter Bib #" />
 
-    <div class="buttons">
-      <button class="startRace">Start Race</button>
-      <button class="recordTime" disabled>Record Time</button>
-      <button class="clearResults">Reset Page Locally</button>
-    </div>
+      <div class="buttons">
+        <button class="startRace">Start Race</button>
+        <button class="recordTime" disabled>Record Time</button>
+        <button class="clearResults">Reset Page Locally</button>
+      </div>
 
-    <div class="liveLink">
-      <button class="liveResultsBtn" onclick="window.location.href='live-results.html'">View Live Results</button>
-    </div>
-  </div>
+      <nav class="liveLink">
+        <button class="liveResultsBtn" onclick="window.location.href='live-results.html'">View Live Results</button>
+      </nav>
+    </section>
 
-  <ul class="results"></ul>
+    <section>
+      <ul class="results"></ul>
+    </section>
+  </main>
+
   <script src="main.js"></script>
 </body>
 </html>
