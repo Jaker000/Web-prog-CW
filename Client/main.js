@@ -8,7 +8,7 @@ const raceTimer = document.querySelector('#raceTimer');
 
 let raceStartTime = null;
 let timerInterval = null;
-let raceId = null;
+let raceId = '';
 
 function formatTime(ms) {
   const date = new Date(ms);
@@ -16,7 +16,6 @@ function formatTime(ms) {
 }
 
 async function fetchStartTime() {
-  raceId = raceIdInput.value.trim();
   if (!raceId) return null;
 
   try {
@@ -29,6 +28,7 @@ async function fetchStartTime() {
   } catch {
     return null;
   }
+
   return null;
 }
 
@@ -41,20 +41,22 @@ function startTimer() {
   clearInterval(timerInterval);
   timerInterval = setInterval(() => {
     const now = Date.now();
-    const elapsed = now - raceStartTime;
-    raceTimer.textContent = formatTime(elapsed);
+    raceTimer.textContent = formatTime(now - raceStartTime);
   }, 100);
 }
 
 startButton.addEventListener('click', async () => {
   raceId = raceIdInput.value.trim();
-  if (!raceId) return alert("Please enter a Race ID.");
+  if (!raceId) {
+    alert("Please enter a Race ID.");
+    return;
+  }
 
   const res = await fetch(`/start-time?raceId=${encodeURIComponent(raceId)}`);
   const data = await res.json();
 
   if (data.startTime) {
-    alert("Race already started at: " + new Date(data.startTime).toLocaleTimeString());
+    alert(`Race already started at: ${new Date(data.startTime).toLocaleTimeString()}`);
     return;
   }
 
@@ -65,13 +67,14 @@ startButton.addEventListener('click', async () => {
     body: JSON.stringify({ raceId, startTime: now })
   });
 
+  localStorage.setItem(`raceStartTime-${raceId}`, now);
   raceStartTime = Date.parse(now);
   startTimer();
 });
 
 recordButton.addEventListener('click', async () => {
   if (!raceStartTime) return alert("Race is not running!");
-  if (!raceId) raceId = raceIdInput.value.trim();
+  raceId = raceIdInput.value.trim();
   if (!raceId) return alert("Missing Race ID.");
 
   const bib = bibInput.value.trim() || 'Unknown';
@@ -93,13 +96,13 @@ recordButton.addEventListener('click', async () => {
   const listItem = document.createElement('li');
   listItem.textContent = `#${position} | Bib: ${result.bib} | Time: ${result.time}`;
   finishList.appendChild(listItem);
-  bibInput.value = '';
 });
 
 resetButton.addEventListener('click', () => {
   clearInterval(timerInterval);
   timerInterval = null;
   raceStartTime = null;
+
   raceTimer.textContent = '00:00:00.00';
   recordButton.disabled = true;
   startButton.disabled = false;
@@ -108,6 +111,8 @@ resetButton.addEventListener('click', () => {
 
 window.addEventListener('DOMContentLoaded', async () => {
   raceId = raceIdInput.value.trim();
+  if (!raceId) return;
+
   raceStartTime = await fetchStartTime();
   if (raceStartTime) startTimer();
 });
